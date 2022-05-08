@@ -1,4 +1,15 @@
 
+var/Vector/Vector = new
+
+Vector
+	var/vector/zero = new(0, 0, 0)
+	var/vector/north = new(0, 1, 0)
+	var/vector/south = new(0, -1, 0)
+	var/vector/east = new(1, 0, 0)
+	var/vector/west = new(-1, 0, 0)
+	var/vector/up = new(0, 0, 1)
+	var/vector/down = new(0, 0, -1)
+
 proc/dir2vector(dir)
 	return new/vector(
 		((dir & EAST) > 0) - ((dir & WEST) > 0),
@@ -18,6 +29,9 @@ vector
 
 	proc/Z()
 		return _z
+
+	proc/With(x = _x, y = _y, z = _z)
+		return new/vector(x, y, z)
 
 	proc/Text(figures = 6)
 		return text("vector([], [], [])",
@@ -118,13 +132,16 @@ vector
 	proc/Direction()
 		return src / Length()
 
+	proc/HasDirection()
+		return src ~! Vector.zero
+
 	proc/DirectionOrZero()
-		return IsZero() ? src : Direction()
+		return HasDirection() ? Direction() : src
 
-	proc/IsZero()
-		return src ~= new/vector(0, 0, 0)
+	proc/HasLength()
+		return HasDirection()
 
-	proc/Rotation(vector/from = new(0, 1, 0))
+	proc/Rotation(vector/from = Vector.north)
 		var/vector/to_direction = Direction()
 		var/vector/from_direction = from.Direction()
 		var/cos = to_direction.Dot(from_direction)
@@ -138,7 +155,7 @@ vector
 		return src * (length / Length())
 
 	proc/WithLengthOrZero(length)
-		return IsZero() ? src : WithLength(length)
+		return HasLength() ? WithLength(length) : src
 
 	proc/ClampLength(upper)
 		return DirectionOrZero() * min(Length(), upper)
