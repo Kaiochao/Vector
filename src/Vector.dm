@@ -188,6 +188,22 @@ vector
 			(Y() == 0 ? 0 : Y() > 0 ? NORTH : SOUTH) | \
 			(Z() == 0 ? 0 : Z() > 0 ? UP : DOWN)
 
+	proc/Clamp(vector/lower, vector/upper)
+		return new/vector(
+			clamp(X(), lower.X(), upper.X()), 
+			clamp(Y(), lower.Y(), upper.Y()), 
+			clamp(Z(), lower.Z(), upper.Z()))
+
+	proc/DegreesTo(vector/other)
+		return -DegreesFrom(other)
+
+	proc/DegreesFrom(vector/other)
+		var/vector/direction = Direction()
+		var/vector/other_direction = other.Direction()
+		var/cos = direction.Dot(other_direction)
+		var/sin = direction.CrossZ(other_direction)
+		return arctan(cos, sin)
+
 	New(x = 0, y = 0, z = 0)
 		..()
 		_x = x
